@@ -1,2 +1,3 @@
-# mombday
-Birthday present for mom.
+# pebble-windowsill
+
+For a birthday present.
