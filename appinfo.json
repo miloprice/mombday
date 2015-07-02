@@ -9,6 +9,16 @@
     "resources": {
         "media": [
             {
+                "file": "images/moon.png",
+                "name": "IMAGE_MOON",
+                "type": "png"
+            },
+            {
+                "file": "images/curtains-thin.png",
+                "name": "IMAGE_CURTAINS_T",
+                "type": "png-trans"
+            },
+            {
                 "file": "images/curtainlines.png",
                 "name": "IMAGE_FRAME_LINES",
                 "type": "png"
@@ -21,16 +31,6 @@
             {
                 "file": "images/curtains.png",
                 "name": "IMAGE_FRAME",
-                "type": "png"
-            },
-            {
-                "file": "images/globe144.png",
-                "name": "IMAGE_GLOBE",
-                "type": "png"
-            },
-            {
-                "file": "images/bigh.png",
-                "name": "IMAGE_BIG_H",
                 "type": "png"
             },
             {

@@ -20,7 +20,7 @@ static TextLayer *text_layer_weekday;
 static TextLayer *text_layer_monthday;
 static TextLayer *text_layer_monthname;
 
-static GBitmap *image;
+static GBitmap *moon;
 static GBitmap *himage;
 static GBitmap *hlimage;
 
@@ -36,7 +36,7 @@ const char *showdate = "Y";
 const char *gmtmod = "000";
 int ggmod = 0;	//global representation of gmt modifier
 
-InverterLayer *inv_layer;	//Inverter layer
+//InverterLayer *inv_layer;	//Inverter layer
 
 char buffer[] = "00:00";
 
@@ -106,9 +106,23 @@ void tick_handler(struct tm *tick_time, TimeUnits units_changed){
 	int secs = tick_time->tm_sec;
 	int hour1 = (secs / 2) % 24; //Used for debugging (allows time to pass quickly)
     if (hours > 6 && hours < 20) {
-        layer_set_hidden(inverter_layer_get_layer(inv_layer), true);
+        // Daytime, loosely defined.
+        //layer_set_hidden(inverter_layer_get_layer(inv_layer), true);
+	    window_set_background_color	(window, GColorWhite);
+	    text_layer_set_text_color(text_layer, GColorBlack);
+	    text_layer_set_text_color(text_layer_shadow1, GColorWhite);
+	    text_layer_set_text_color(text_layer_shadow2, GColorWhite);
+	    text_layer_set_text_color(text_layer_shadow3, GColorWhite);
+	    text_layer_set_text_color(text_layer_shadow4, GColorWhite);
     } else {
-        layer_set_hidden(inverter_layer_get_layer(inv_layer), false);
+        // Nighttime, loosely defined.
+        //layer_set_hidden(inverter_layer_get_layer(inv_layer), false);
+	    window_set_background_color	(window, GColorBlack);
+	    text_layer_set_text_color(text_layer, GColorWhite);
+	    text_layer_set_text_color(text_layer_shadow1, GColorBlack);
+	    text_layer_set_text_color(text_layer_shadow2, GColorBlack);
+	    text_layer_set_text_color(text_layer_shadow3, GColorBlack);
+	    text_layer_set_text_color(text_layer_shadow4, GColorBlack);
     }
 }
 
@@ -177,17 +191,32 @@ void window_load(Window *window)
 	window_set_background_color	(window, GColorWhite);
 	
 	// This needs to be deinited on app exit which is when the event loop ends
-	//image = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_FRAME_WHITE);
-	himage = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_FRAME);
-	hlimage = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_FRAME_LINES);
+	moon = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MOON);
+	himage = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CURTAINS_T_WHITE);
+	hlimage = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CURTAINS_T_BLACK);
 	
 	// The bitmap layer holds the image for display
 	image_layer = bitmap_layer_create(bounds);
-	bitmap_layer_set_bitmap(image_layer, image);
+	bitmap_layer_set_bitmap(image_layer, moon);
 	bitmap_layer_set_alignment(image_layer, GAlignCenter);
 	layer_add_child(window_layer, bitmap_layer_get_layer(image_layer));
 	
-
+    // Curtains; white display items
+	h_layer = bitmap_layer_create(bounds);
+	bitmap_layer_set_bitmap(h_layer, himage);
+	bitmap_layer_set_alignment(h_layer, GAlignCenter);
+	layer_add_child(window_layer, bitmap_layer_get_layer(h_layer));
+	bitmap_layer_set_compositing_mode(h_layer, GCompOpOr);
+    
+    // Curtain lines; black display items
+	hl_layer = bitmap_layer_create(bounds);
+	bitmap_layer_set_bitmap(hl_layer, hlimage);
+	bitmap_layer_set_alignment(hl_layer, GAlignCenter);
+	layer_add_child(window_layer, bitmap_layer_get_layer(hl_layer));
+	bitmap_layer_set_compositing_mode(hl_layer, GCompOpClear);
+    
+    
+	
 	
 	//Load font
 	ResHandle font_handle = resource_get_handle(RESOURCE_ID_FONT_NUNITO_48);
@@ -236,24 +265,11 @@ void window_load(Window *window)
 	layer_add_child(window_get_root_layer(window), (Layer*) text_layer);
 	
 	// layer
-	inv_layer = inverter_layer_create(GRect(11,8,121,154));
-	layer_add_child(window_get_root_layer(window), (Layer*) inv_layer);
+	//inv_layer = inverter_layer_create(GRect(11,8,121,154));
+	//layer_add_child(window_get_root_layer(window), (Layer*) inv_layer);
 	
     
-    
-		// Curtain lines
-	hl_layer = bitmap_layer_create(bounds);
-	bitmap_layer_set_bitmap(hl_layer, hlimage);
-	bitmap_layer_set_alignment(hl_layer, GAlignCenter);
-	layer_add_child(window_layer, bitmap_layer_get_layer(hl_layer));
-	bitmap_layer_set_compositing_mode(hl_layer, GCompOpAnd);
-	
-		// Star mask
-	h_layer = bitmap_layer_create(bounds);
-	bitmap_layer_set_bitmap(h_layer, himage);
-	bitmap_layer_set_alignment(h_layer, GAlignCenter);
-	layer_add_child(window_layer, bitmap_layer_get_layer(h_layer));
-	bitmap_layer_set_compositing_mode(h_layer, GCompOpOr);
+
 	
 		// Day of week
 	text_layer_weekday = text_layer_create(GRect(0, 28, 30, 50));
@@ -296,7 +312,7 @@ void window_unload(Window *window)
 	text_layer_destroy(text_layer_monthday);
 	text_layer_destroy(text_layer_monthname);
 	
-	inverter_layer_destroy(inv_layer);
+	//inverter_layer_destroy(inv_layer);
 }
 
 void handle_init(void) {
@@ -346,7 +362,7 @@ int main(void) {
 
 	tick_timer_service_unsubscribe();
 	
-  	gbitmap_destroy(image);
+  	gbitmap_destroy(moon);
   	gbitmap_destroy(himage);
   	gbitmap_destroy(hlimage);
 	
