@@ -9,6 +9,11 @@
     "resources": {
         "media": [
             {
+                "file": "images/sun.png",
+                "name": "IMAGE_SUN",
+                "type": "png-trans"
+            },
+            {
                 "file": "images/moon.png",
                 "name": "IMAGE_MOON",
                 "type": "png"

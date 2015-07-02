@@ -6,7 +6,7 @@
 
 static Window *window;
 
-static BitmapLayer *image_layer;
+static BitmapLayer *orb_layer;
 static BitmapLayer *h_layer;
 static BitmapLayer *hl_layer;
 
@@ -16,11 +16,13 @@ static TextLayer *text_layer_shadow2;
 static TextLayer *text_layer_shadow3;
 static TextLayer *text_layer_shadow4;
 
-static TextLayer *text_layer_weekday;
+//static TextLayer *text_layer_weekday;
 static TextLayer *text_layer_monthday;
 static TextLayer *text_layer_monthname;
 
 static GBitmap *moon;
+static GBitmap *sun;
+static GBitmap *weather_img;
 static GBitmap *himage;
 static GBitmap *hlimage;
 
@@ -96,7 +98,7 @@ void tick_handler(struct tm *tick_time, TimeUnits units_changed){
 	text_layer_set_text(text_layer, buffer);
 	
 	if (strcmp(showdate,"Y") == 0){
-		text_layer_set_text(text_layer_weekday, weekday);
+		//text_layer_set_text(text_layer_weekday, weekday);
 		text_layer_set_text(text_layer_monthday, monthday);
 		text_layer_set_text(text_layer_monthname, monthname);
 	}
@@ -114,6 +116,8 @@ void tick_handler(struct tm *tick_time, TimeUnits units_changed){
 	    text_layer_set_text_color(text_layer_shadow2, GColorWhite);
 	    text_layer_set_text_color(text_layer_shadow3, GColorWhite);
 	    text_layer_set_text_color(text_layer_shadow4, GColorWhite);
+	    bitmap_layer_set_bitmap(orb_layer, sun);
+	    bitmap_layer_set_compositing_mode(orb_layer, GCompOpAssignInverted);
     } else {
         // Nighttime, loosely defined.
         //layer_set_hidden(inverter_layer_get_layer(inv_layer), false);
@@ -123,63 +127,14 @@ void tick_handler(struct tm *tick_time, TimeUnits units_changed){
 	    text_layer_set_text_color(text_layer_shadow2, GColorBlack);
 	    text_layer_set_text_color(text_layer_shadow3, GColorBlack);
 	    text_layer_set_text_color(text_layer_shadow4, GColorBlack);
+	    bitmap_layer_set_bitmap(orb_layer, moon);
+	    bitmap_layer_set_compositing_mode(orb_layer, GCompOpOr);
     }
 }
 
 static void app_error_callback(DictionaryResult dict_error, AppMessageResult app_message_error, void* context) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "app error %d", app_message_error);
 }
-
- static void settings_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
-// 	switch (key) {
-// 		case SETTING_DATE_KEY:
-// 	  	if (strcmp(new_tuple->value->cstring,"N") == 0 && strcmp(showdate, "Y") == 0){
-// 			text_layer_destroy(text_layer_weekday);
-// 			text_layer_destroy(text_layer_monthday);
-// 			text_layer_destroy(text_layer_monthname);
-// 			showdate = "N";
-// 		} else if (strcmp(new_tuple->value->cstring,"Y") == 0 && strcmp(showdate, "N") == 0){
-			
-// 			ResHandle date_font = resource_get_handle(RESOURCE_ID_FONT_NUNITO_BOLD_15);
-// 				// Day of week
-// 			text_layer_weekday = text_layer_create(GRect(0, 28, 30, 50));
-// 			text_layer_set_background_color(text_layer_weekday, GColorClear);
-// 			text_layer_set_text_color(text_layer_weekday, GColorWhite);
-// 			text_layer_set_text_alignment(text_layer_weekday, GTextAlignmentLeft);
-// 			text_layer_set_font(text_layer_weekday, fonts_get_system_font(FONT_KEY_GOTHIC_14));
-			
-// 			layer_add_child(window_get_root_layer(window), (Layer*) text_layer_weekday);
-			
-// 				// Name of month
-// 			text_layer_monthname = text_layer_create(GRect(0, 0, 50, 20));
-// 			text_layer_set_background_color(text_layer_monthname, GColorClear);
-// 			text_layer_set_text_color(text_layer_monthname, GColorWhite);
-// 			text_layer_set_text_alignment(text_layer_monthname, GTextAlignmentLeft);
-// 			text_layer_set_font(text_layer_monthname, fonts_get_system_font(FONT_KEY_GOTHIC_14));
-			
-// 			layer_add_child(window_get_root_layer(window), (Layer*) text_layer_monthname);
-			
-			
-// 				// Day of month
-// 			text_layer_monthday = text_layer_create(GRect(0, 14, 30, 29));
-// 			text_layer_set_background_color(text_layer_monthday, GColorClear);
-// 			text_layer_set_text_color(text_layer_monthday, GColorWhite);
-// 			text_layer_set_text_alignment(text_layer_monthday, GTextAlignmentLeft);
-// 			text_layer_set_font(text_layer_monthday, fonts_load_custom_font(date_font));
-			
-// 			layer_add_child(window_get_root_layer(window), (Layer*) text_layer_monthday);
-			
-// 			showdate = "Y";
-// 		}
-//         break;
-//     case SETTING_GMT_KEY:
-		
-//       gmtmod = new_tuple->value->cstring;
-// 		adj_hour();
-// 	  hasanim = 0;
-//       break;
-   }
-// }
 
 void window_load(Window *window)
 {	
@@ -192,14 +147,16 @@ void window_load(Window *window)
 	
 	// This needs to be deinited on app exit which is when the event loop ends
 	moon = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MOON);
+    sun = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_SUN_BLACK);
 	himage = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CURTAINS_T_WHITE);
 	hlimage = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CURTAINS_T_BLACK);
 	
-	// The bitmap layer holds the image for display
-	image_layer = bitmap_layer_create(bounds);
-	bitmap_layer_set_bitmap(image_layer, moon);
-	bitmap_layer_set_alignment(image_layer, GAlignCenter);
-	layer_add_child(window_layer, bitmap_layer_get_layer(image_layer));
+	// Sun or moon
+	orb_layer = bitmap_layer_create(bounds);
+	//bitmap_layer_set_bitmap(orb_layer, sun);
+	bitmap_layer_set_alignment(orb_layer, GAlignTop);
+	layer_add_child(window_layer, bitmap_layer_get_layer(orb_layer));
+	//bitmap_layer_set_compositing_mode(h_layer, GCompOpClear);
 	
     // Curtains; white display items
 	h_layer = bitmap_layer_create(bounds);
@@ -272,16 +229,16 @@ void window_load(Window *window)
 
 	
 		// Day of week
-	text_layer_weekday = text_layer_create(GRect(0, 28, 30, 50));
-	text_layer_set_background_color(text_layer_weekday, GColorClear);
-	text_layer_set_text_color(text_layer_weekday, GColorBlack);
-	text_layer_set_text_alignment(text_layer_weekday, GTextAlignmentLeft);
-	text_layer_set_font(text_layer_weekday, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+// 	text_layer_weekday = text_layer_create(GRect(0, 28, 30, 50));
+// 	text_layer_set_background_color(text_layer_weekday, GColorClear);
+// 	text_layer_set_text_color(text_layer_weekday, GColorBlack);
+// 	text_layer_set_text_alignment(text_layer_weekday, GTextAlignmentLeft);
+// 	text_layer_set_font(text_layer_weekday, fonts_get_system_font(FONT_KEY_GOTHIC_14));
 	
-	layer_add_child(window_get_root_layer(window), (Layer*) text_layer_weekday);
+// 	layer_add_child(window_get_root_layer(window), (Layer*) text_layer_weekday);
 	
 		// Name of month
-	text_layer_monthname = text_layer_create(GRect(0, 0, 50, 20));
+	text_layer_monthname = text_layer_create(GRect(2, 0, 50, 20));
 	text_layer_set_background_color(text_layer_monthname, GColorClear);
 	text_layer_set_text_color(text_layer_monthname, GColorBlack);
 	text_layer_set_text_alignment(text_layer_monthname, GTextAlignmentLeft);
@@ -308,7 +265,7 @@ void window_unload(Window *window)
 	text_layer_destroy(text_layer_shadow2);
 	text_layer_destroy(text_layer_shadow3);
 	text_layer_destroy(text_layer_shadow4);
-	text_layer_destroy(text_layer_weekday);
+	//text_layer_destroy(text_layer_weekday);
 	text_layer_destroy(text_layer_monthday);
 	text_layer_destroy(text_layer_monthname);
 	
@@ -330,7 +287,9 @@ void handle_init(void) {
 
 }
 
-
+void settings_changed_callback(){
+    
+}
 
 static void app_message_init(void) {
   // Reduce the sniff interval for more responsive messaging at the expense of
@@ -363,12 +322,13 @@ int main(void) {
 	tick_timer_service_unsubscribe();
 	
   	gbitmap_destroy(moon);
+    gbitmap_destroy(sun);
   	gbitmap_destroy(himage);
   	gbitmap_destroy(hlimage);
 	
 	app_sync_deinit(&async);
 	
-	bitmap_layer_destroy(image_layer);
+	bitmap_layer_destroy(orb_layer);
 	bitmap_layer_destroy(h_layer);
 	window_destroy(window);
 }
