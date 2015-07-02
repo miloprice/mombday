@@ -9,6 +9,7 @@ static Window *window;
 static BitmapLayer *orb_layer;
 static BitmapLayer *h_layer;
 static BitmapLayer *hl_layer;
+static BitmapLayer *face_layer;
 
 static TextLayer *text_layer;
 static TextLayer *text_layer_shadow1;
@@ -25,6 +26,10 @@ static GBitmap *sun;
 static GBitmap *weather_img;
 static GBitmap *himage;
 static GBitmap *hlimage;
+static GBitmap *momimage;
+static GBitmap *dadimage;
+static GBitmap *miloimage;
+static GBitmap *noraimage;
 
 enum SettingsKey{
 	SETTING_DATE_KEY = 0x0,		// TUPLE_CSTRING
@@ -97,17 +102,31 @@ void tick_handler(struct tm *tick_time, TimeUnits units_changed){
 	text_layer_set_text(text_layer_shadow4, buffer);
 	text_layer_set_text(text_layer, buffer);
 	
-	if (strcmp(showdate,"Y") == 0){
-		//text_layer_set_text(text_layer_weekday, weekday);
-		text_layer_set_text(text_layer_monthday, monthday);
-		text_layer_set_text(text_layer_monthname, monthname);
-	}
+    text_layer_set_text(text_layer_monthday, monthday);
+    text_layer_set_text(text_layer_monthname, monthname);
+	
 	
 	int hours = tick_time->tm_hour;
-	int mins = tick_time->tm_min;
-	int secs = tick_time->tm_sec;
-	int hour1 = (secs / 2) % 24; //Used for debugging (allows time to pass quickly)
-    if (hours > 6 && hours < 20) {
+// 	int mins = tick_time->tm_min;
+// 	int secs = tick_time->tm_sec;
+    if (strcmp(monthname, "Jul") == 0 && strcmp(monthday, " 3") == 0){
+	    layer_set_hidden(bitmap_layer_get_layer(face_layer), false);
+        bitmap_layer_set_bitmap(face_layer, momimage);
+    } else if (strcmp(monthname, "Apr") == 0 && strcmp(monthday, "15") == 0){
+	    layer_set_hidden(bitmap_layer_get_layer(face_layer), false);
+        bitmap_layer_set_bitmap(face_layer, dadimage);
+    } else if (strcmp(monthname, "Apr") == 0 && strcmp(monthday, "19") == 0){
+	    layer_set_hidden(bitmap_layer_get_layer(face_layer), false);
+        bitmap_layer_set_bitmap(face_layer, noraimage);
+    } else if (strcmp(monthname, "May") == 0 && strcmp(monthday, "14") == 0){
+	    layer_set_hidden(bitmap_layer_get_layer(face_layer), false);
+        bitmap_layer_set_bitmap(face_layer, miloimage);
+    } else {
+	    layer_set_hidden(bitmap_layer_get_layer(face_layer), true);
+    }
+    
+	//int hour1 = (secs / 2) % 24; //Used for debugging (allows time to pass quickly)
+    if (hours >= 6 && hours <= 20) {
         // Daytime, loosely defined.
         //layer_set_hidden(inverter_layer_get_layer(inv_layer), true);
 	    window_set_background_color	(window, GColorWhite);
@@ -150,13 +169,27 @@ void window_load(Window *window)
     sun = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_SUN_BLACK);
 	himage = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CURTAINS_T_WHITE);
 	hlimage = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CURTAINS_T_BLACK);
-	
+    momimage = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MOM);
+    miloimage = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MILO);
+    noraimage = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_NORA);
+    dadimage = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_DAD);
+    
 	// Sun or moon
 	orb_layer = bitmap_layer_create(bounds);
 	//bitmap_layer_set_bitmap(orb_layer, sun);
 	bitmap_layer_set_alignment(orb_layer, GAlignTop);
 	layer_add_child(window_layer, bitmap_layer_get_layer(orb_layer));
 	//bitmap_layer_set_compositing_mode(h_layer, GCompOpClear);
+    
+    
+    // Birthday face
+	face_layer = bitmap_layer_create(bounds);
+	bitmap_layer_set_bitmap(face_layer, momimage);
+	bitmap_layer_set_alignment(face_layer, GAlignBottomLeft);
+	layer_add_child(window_layer, bitmap_layer_get_layer(face_layer));
+	bitmap_layer_set_compositing_mode(face_layer, GCompOpAssign);
+	layer_set_hidden(bitmap_layer_get_layer(face_layer), true);
+    
 	
     // Curtains; white display items
 	h_layer = bitmap_layer_create(bounds);
@@ -238,7 +271,7 @@ void window_load(Window *window)
 // 	layer_add_child(window_get_root_layer(window), (Layer*) text_layer_weekday);
 	
 		// Name of month
-	text_layer_monthname = text_layer_create(GRect(2, 0, 50, 20));
+	text_layer_monthname = text_layer_create(GRect(0, 0, 50, 20));
 	text_layer_set_background_color(text_layer_monthname, GColorClear);
 	text_layer_set_text_color(text_layer_monthname, GColorBlack);
 	text_layer_set_text_alignment(text_layer_monthname, GTextAlignmentLeft);
@@ -316,7 +349,6 @@ int main(void) {
 	app_message_init();
 	handle_init();
 
-
   	app_event_loop();
 
 	tick_timer_service_unsubscribe();
@@ -325,6 +357,10 @@ int main(void) {
     gbitmap_destroy(sun);
   	gbitmap_destroy(himage);
   	gbitmap_destroy(hlimage);
+    gbitmap_destroy(momimage);
+    gbitmap_destroy(miloimage);
+    gbitmap_destroy(noraimage);
+    gbitmap_destroy(dadimage);
 	
 	app_sync_deinit(&async);
 	

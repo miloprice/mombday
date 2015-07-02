@@ -3,15 +3,41 @@
     "capabilities": [
         ""
     ],
-    "companyName": "miloprice",
-    "longName": "MomBirthday",
+    "companyName": "Milo Price",
+    "longName": "Windowsill",
     "projectType": "native",
     "resources": {
         "media": [
             {
+                "file": "images/icon.png",
+                "menuIcon": true,
+                "name": "IMAGE_MENUICON",
+                "type": "png"
+            },
+            {
                 "file": "images/sun.png",
                 "name": "IMAGE_SUN",
                 "type": "png-trans"
+            },
+            {
+                "file": "images/dadface.png",
+                "name": "IMAGE_DAD",
+                "type": "png"
+            },
+            {
+                "file": "images/noraface.png",
+                "name": "IMAGE_NORA",
+                "type": "png"
+            },
+            {
+                "file": "images/miloface.png",
+                "name": "IMAGE_MILO",
+                "type": "png"
+            },
+            {
+                "file": "images/momface2.png",
+                "name": "IMAGE_MOM",
+                "type": "png"
             },
             {
                 "file": "images/moon.png",
@@ -59,10 +85,10 @@
         ]
     },
     "sdkVersion": "2",
-    "shortName": "MMP",
+    "shortName": "MMP Window",
     "uuid": "3c693434-6620-4860-8318-5dc1017cd91c",
     "versionCode": 1,
-    "versionLabel": "0.1",
+    "versionLabel": "7.03",
     "watchapp": {
         "watchface": true
     }
