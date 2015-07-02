@@ -1,0 +1,64 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        ""
+    ],
+    "companyName": "miloprice",
+    "longName": "MomBirthday",
+    "projectType": "native",
+    "resources": {
+        "media": [
+            {
+                "file": "images/curtainlines.png",
+                "name": "IMAGE_FRAME_LINES",
+                "type": "png"
+            },
+            {
+                "file": "images/curtainsclear.png",
+                "name": "IMAGE_CURTAINS",
+                "type": "png-trans"
+            },
+            {
+                "file": "images/curtains.png",
+                "name": "IMAGE_FRAME",
+                "type": "png"
+            },
+            {
+                "file": "images/globe144.png",
+                "name": "IMAGE_GLOBE",
+                "type": "png"
+            },
+            {
+                "file": "images/bigh.png",
+                "name": "IMAGE_BIG_H",
+                "type": "png"
+            },
+            {
+                "characterRegex": "[0-9:. ]",
+                "file": "fonts/Nunito-Regular.ttf",
+                "name": "FONT_NUNITO_48",
+                "type": "font"
+            },
+            {
+                "characterRegex": "[0-9 ]",
+                "file": "fonts/Nunito-Bold.ttf",
+                "name": "FONT_NUNITO_BOLD_15",
+                "type": "font"
+            },
+            {
+                "characterRegex": "[0-9:. ]",
+                "file": "fonts/ShareTechMono-Regular.ttf",
+                "name": "FONT_SHARE_TECH_48",
+                "type": "font"
+            }
+        ]
+    },
+    "sdkVersion": "2",
+    "shortName": "MMP",
+    "uuid": "3c693434-6620-4860-8318-5dc1017cd91c",
+    "versionCode": 1,
+    "versionLabel": "0.1",
+    "watchapp": {
+        "watchface": true
+    }
+}
