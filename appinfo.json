@@ -9,15 +9,20 @@
     "resources": {
         "media": [
             {
+                "file": "images/moon2.png",
+                "name": "IMAGE_MOON",
+                "type": "png"
+            },
+            {
+                "file": "images/sun2.png",
+                "name": "IMAGE_SUN",
+                "type": "png-trans"
+            },
+            {
                 "file": "images/icon.png",
                 "menuIcon": true,
                 "name": "IMAGE_MENUICON",
                 "type": "png"
-            },
-            {
-                "file": "images/sun.png",
-                "name": "IMAGE_SUN",
-                "type": "png-trans"
             },
             {
                 "file": "images/dadface.png",
@@ -40,29 +45,9 @@
                 "type": "png"
             },
             {
-                "file": "images/moon.png",
-                "name": "IMAGE_MOON",
-                "type": "png"
-            },
-            {
                 "file": "images/curtains-thin.png",
                 "name": "IMAGE_CURTAINS_T",
                 "type": "png-trans"
-            },
-            {
-                "file": "images/curtainlines.png",
-                "name": "IMAGE_FRAME_LINES",
-                "type": "png"
-            },
-            {
-                "file": "images/curtainsclear.png",
-                "name": "IMAGE_CURTAINS",
-                "type": "png-trans"
-            },
-            {
-                "file": "images/curtains.png",
-                "name": "IMAGE_FRAME",
-                "type": "png"
             },
             {
                 "characterRegex": "[0-9:. ]",

@@ -204,15 +204,11 @@ void window_load(Window *window)
 	bitmap_layer_set_alignment(hl_layer, GAlignCenter);
 	layer_add_child(window_layer, bitmap_layer_get_layer(hl_layer));
 	bitmap_layer_set_compositing_mode(hl_layer, GCompOpClear);
-    
-    
-	
 	
 	//Load font
 	ResHandle font_handle = resource_get_handle(RESOURCE_ID_FONT_NUNITO_48);
 	ResHandle date_font = resource_get_handle(RESOURCE_ID_FONT_NUNITO_BOLD_15);
-
-	
+    
 	//Time layer
 	text_layer = text_layer_create(GRect(1, 55, 144, 168));
 	text_layer_set_background_color(text_layer, GColorClear);
@@ -257,9 +253,6 @@ void window_load(Window *window)
 	// layer
 	//inv_layer = inverter_layer_create(GRect(11,8,121,154));
 	//layer_add_child(window_get_root_layer(window), (Layer*) inv_layer);
-	
-    
-
 	
 		// Day of week
 // 	text_layer_weekday = text_layer_create(GRect(0, 28, 30, 50));
