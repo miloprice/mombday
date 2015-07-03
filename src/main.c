@@ -17,13 +17,13 @@ static TextLayer *text_layer_shadow2;
 static TextLayer *text_layer_shadow3;
 static TextLayer *text_layer_shadow4;
 
-//static TextLayer *text_layer_weekday;
+static TextLayer *text_layer_weekday;
 static TextLayer *text_layer_monthday;
 static TextLayer *text_layer_monthname;
 
 static GBitmap *moon;
 static GBitmap *sun;
-static GBitmap *weather_img;
+//static GBitmap *weather_img;
 static GBitmap *himage;
 static GBitmap *hlimage;
 static GBitmap *momimage;
@@ -104,6 +104,7 @@ void tick_handler(struct tm *tick_time, TimeUnits units_changed){
 	
     text_layer_set_text(text_layer_monthday, monthday);
     text_layer_set_text(text_layer_monthname, monthname);
+    text_layer_set_text(text_layer_weekday, weekday);
 	
 	
 	int hours = tick_time->tm_hour;
@@ -176,10 +177,8 @@ void window_load(Window *window)
     
 	// Sun or moon
 	orb_layer = bitmap_layer_create(bounds);
-	//bitmap_layer_set_bitmap(orb_layer, sun);
 	bitmap_layer_set_alignment(orb_layer, GAlignTop);
 	layer_add_child(window_layer, bitmap_layer_get_layer(orb_layer));
-	//bitmap_layer_set_compositing_mode(h_layer, GCompOpClear);
     
     
     // Birthday face
@@ -255,13 +254,13 @@ void window_load(Window *window)
 	//layer_add_child(window_get_root_layer(window), (Layer*) inv_layer);
 	
 		// Day of week
-// 	text_layer_weekday = text_layer_create(GRect(0, 28, 30, 50));
-// 	text_layer_set_background_color(text_layer_weekday, GColorClear);
-// 	text_layer_set_text_color(text_layer_weekday, GColorBlack);
-// 	text_layer_set_text_alignment(text_layer_weekday, GTextAlignmentLeft);
-// 	text_layer_set_font(text_layer_weekday, fonts_get_system_font(FONT_KEY_GOTHIC_14));
+	text_layer_weekday = text_layer_create(GRect(126, 0, 30, 50));
+	text_layer_set_background_color(text_layer_weekday, GColorClear);
+	text_layer_set_text_color(text_layer_weekday, GColorBlack);
+	text_layer_set_text_alignment(text_layer_weekday, GTextAlignmentLeft);
+	text_layer_set_font(text_layer_weekday, fonts_get_system_font(FONT_KEY_GOTHIC_14));
 	
-// 	layer_add_child(window_get_root_layer(window), (Layer*) text_layer_weekday);
+	layer_add_child(window_get_root_layer(window), (Layer*) text_layer_weekday);
 	
 		// Name of month
 	text_layer_monthname = text_layer_create(GRect(0, 0, 50, 20));
@@ -291,7 +290,7 @@ void window_unload(Window *window)
 	text_layer_destroy(text_layer_shadow2);
 	text_layer_destroy(text_layer_shadow3);
 	text_layer_destroy(text_layer_shadow4);
-	//text_layer_destroy(text_layer_weekday);
+	text_layer_destroy(text_layer_weekday);
 	text_layer_destroy(text_layer_monthday);
 	text_layer_destroy(text_layer_monthname);
 	
